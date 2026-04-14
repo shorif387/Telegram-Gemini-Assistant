@@ -1,6 +1,6 @@
 {
   "name": "telegram-gemini-assistant",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Telegram personal assistant using Gemini + Firestore",
   "main": "server.js",
   "type": "commonjs",
