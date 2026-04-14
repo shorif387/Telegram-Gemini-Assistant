@@ -43,7 +43,7 @@ const db = admin.firestore();
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash",
+  model: "gemini-3.1-flash-lite-preview",
 });
 
 async function sendTelegramMessage(chatId, text) {
@@ -188,11 +188,31 @@ Assistant:
 }
 
 async function generateGeminiReply(prompt) {
-  const result = await model.generateContent(prompt);
-  const reply =
-    result?.response?.text?.()?.trim() ||
-    "দুঃখিত, এখন reply generate করতে পারিনি।";
-  return limitText(reply, 3500);
+  const retries = 3;
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const result = await model.generateContent(prompt);
+
+      const reply =
+        result?.response?.text?.()?.trim() ||
+        "দুঃখিত, এখন reply generate করতে পারিনি।";
+
+      return limitText(reply, 3500);
+    } catch (error) {
+      const status = error?.status || error?.response?.status;
+
+      if (status === 503 && attempt < retries) {
+        await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
+        continue;
+      }
+
+      console.error("Gemini error:", error?.message || error);
+      return "এখন Gemini server-এ একটু বেশি load আছে। একটু পরে আবার চেষ্টা করো 🙏";
+    }
+  }
+
+  return "দুঃখিত, এখন reply generate করতে পারিনি।";
 }
 
 function extractCommand(text) {
