@@ -1,0 +1,17 @@
+{
+  "name": "telegram-gemini-assistant",
+  "version": "1.0.0",
+  "description": "Telegram personal assistant using Gemini + Firestore",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "firebase-admin": "^12.7.0"
+  }
+}
